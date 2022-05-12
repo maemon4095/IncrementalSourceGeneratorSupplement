@@ -1,0 +1,28 @@
+﻿<#@ template language="C#" linePragmas="false" debug="false" hostspecific="false" visibility="internal" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="netstandard"#>
+<#@ assembly name="Microsoft.CodeAnalysis.CSharp.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Microsoft.CodeAnalysis.CSharp"#>
+<#@ output extension=".cs" #>
+
+<#
+var keywords = Enum.GetNames(typeof(SyntaxKind)).Where(name => name.EndsWith("Keyword"));
+static bool NeedsNew(string keyword)
+{
+	switch(keyword)
+	{
+		case "EqualsKeyword":
+			return true;
+		default: return false;
+	}
+}
+#>
+using Microsoft.CodeAnalysis.CSharp;
+namespace SourceGeneratorSupplement.Factory;
+public static partial class Keyword
+{
+<# foreach(var keyword in keywords) { #>
+	<# if(NeedsNew(keyword)) { #>new <# } #>public static string <#= keyword.Replace("Keyword", "") #> => SyntaxFacts.GetText(SyntaxKind.<#= keyword #>);
+<# } #>
+}
