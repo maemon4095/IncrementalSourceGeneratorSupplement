@@ -40,7 +40,7 @@ var compilation = CreateCompilation(syntaxTree);
 var writer = new IndentedWriter("    ");
 var globalType = compilation.GetTypeByMetadataName("G")!;
 Console.WriteLine(globalType.ContainingSymbol);
-writer.DeclarationScope(globalType, (writer, type) =>
+writer.DeclarationScope(globalType.ContainingSymbol, (writer, type) =>
 {
     writer["//global"].Line();
 });
@@ -74,7 +74,7 @@ foreach (var member in type.GetMembers())
             break;
 
         case IMethodSymbol m:
-            if (m.MethodKind != MethodKind.Ordinary || m.MethodKind == MethodKind.ExplicitInterfaceImplementation) break;
+            if (m.MethodKind is not MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation) break;
             writer.DeclarationScope(m, (writer, type) =>
             {
                 writer["//Method"].Line();
@@ -85,7 +85,7 @@ foreach (var member in type.GetMembers())
 
 writer.DeclarationScope(type, (writer, type) =>
 {
-    foreach (var member in type.GetMembers())
+    foreach (var member in (type as INamespaceOrTypeSymbol).GetMembers())
     {
         if (member.IsImplicitlyDeclared) continue;
         switch (member)

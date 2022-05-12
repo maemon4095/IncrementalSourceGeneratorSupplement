@@ -43,6 +43,8 @@ public struct WriterDeclarationScope : IDisposable
 
     static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, int depth)
     {
+        if (symbol is INamespaceSymbol { IsGlobalNamespace: true}) yield break;
+
         var reversed = ReversedContainings(symbol);
         var containings = (depth < 0 ? reversed : reversed.Take(depth)).Reverse();
 
@@ -54,8 +56,9 @@ public struct WriterDeclarationScope : IDisposable
     }
     static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, Func<ISymbol, bool> terminal)
     {
+        if (symbol is INamespaceSymbol { IsGlobalNamespace: true }) yield break;
         var containings = Until(ReversedContainings(symbol), terminal).Reverse();
-
+       
         foreach (var containing in containings)
         {
             yield return containing;

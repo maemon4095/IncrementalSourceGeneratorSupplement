@@ -16,7 +16,7 @@
 	<!-- nuget -->
 	<PropertyGroup>
 		<Authors>maemon4095</Authors>
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 		<Description>Supplemental tools for source generation.</Description>
 		<Copyright>© maemon4095 2022</Copyright>
 		<PackageTags>sourcegenerator</PackageTags>

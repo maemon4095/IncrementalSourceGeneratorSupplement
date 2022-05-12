@@ -16,7 +16,7 @@ public static class IndentedWriterExtension
         }
         return writer;
     }
- 
+
     public static WriterBlockScope BlockScope(this IndentedWriter writer, int level)
     {
         return new(writer, "{", "}", level);
@@ -42,7 +42,20 @@ public static class IndentedWriterExtension
         }
         return writer;
     }
- 
+
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol symbol, int depth)
+    {
+        return new(writer,symbol, depth);
+    }
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, ISymbol symbol, int depth, Action<IndentedWriter, ISymbol> action)
+    {
+        using (var scope = writer.DeclarationScope(symbol, depth))
+        {
+            action(scope.Writer, symbol);
+        }
+        return writer;
+    }
+
     public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
     {
         return new(writer, symbol, terminal);
