@@ -24,14 +24,10 @@ namespace N.V
         public static partial void Y(ref int x, in int y, out int z);
         void IFoo.Z() { }
         public int P { get; set; }
-    }
-
-    abstract class Ab
-    {
-    }
     
-    virtual class Vi
-    {
+        class I
+        {
+        }
     }
 
     enum E
@@ -42,12 +38,18 @@ namespace N.V
 
 var compilation = CreateCompilation(syntaxTree);
 var writer = new IndentedWriter("    ");
-var globalType = compilation.GetTypeByMetadataName("G");
+var globalType = compilation.GetTypeByMetadataName("G")!;
+Console.WriteLine(globalType.ContainingSymbol);
 writer.DeclarationScope(globalType, (writer, type) =>
 {
     writer["//global"].Line();
 });
 var type = compilation.GetTypeByMetadataName("N.V.A`1")!;
+Console.WriteLine(type.ContainingSymbol);
+
+var innerType = compilation.GetTypeByMetadataName("N.V.A`1+I")!;
+Console.WriteLine(innerType.ContainingSymbol);
+
 writer.DeclarationScope(type, (writer, type) =>
 {
     writer["//Comment"].Line();

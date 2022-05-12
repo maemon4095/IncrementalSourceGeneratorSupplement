@@ -4,28 +4,17 @@ using SourceGeneratorSupplement.Factory;
 namespace SourceGeneratorSupplement;
 public struct WriterDeclarationScope : IDisposable
 {
-    WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, int depth)
+    public WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, int depth)
     {
         this.Writer = writer;
         this.depth = InitialWrite(writer, depth, symbol);
     }
-    WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
+    public WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
     {
         this.Writer = writer;
         this.depth = InitialWrite(writer, terminal, symbol);
     }
-
-    public WriterDeclarationScope(IndentedWriter writer, INamedTypeSymbol symbol) : this(writer, symbol, -1) { }
-    public WriterDeclarationScope(IndentedWriter writer, INamespaceSymbol symbol) : this(writer, symbol, -1) { }
-    public WriterDeclarationScope(IndentedWriter writer, IMethodSymbol symbol) : this(writer, symbol, -1) { }
-
-    public WriterDeclarationScope(IndentedWriter writer, INamedTypeSymbol symbol, int depth) : this(writer, (ISymbol)symbol, depth) { }
-    public WriterDeclarationScope(IndentedWriter writer, INamespaceSymbol symbol, int depth) : this(writer, (ISymbol)symbol, depth) { }
-    public WriterDeclarationScope(IndentedWriter writer, IMethodSymbol symbol, int depth) : this(writer, (ISymbol)symbol, depth) { }
-
-    public WriterDeclarationScope(IndentedWriter writer, INamedTypeSymbol symbol, Func<ISymbol, bool> terminal) : this(writer, (ISymbol)symbol, terminal) { }
-    public WriterDeclarationScope(IndentedWriter writer, INamespaceSymbol symbol, Func<ISymbol, bool> terminal) : this(writer, (ISymbol)symbol, terminal) { }
-    public WriterDeclarationScope(IndentedWriter writer, IMethodSymbol symbol, Func<ISymbol, bool> terminal) : this(writer, (ISymbol)symbol, terminal) { }
+    public WriterDeclarationScope(IndentedWriter writer, ISymbol symbol) : this(writer, symbol, -1) { }
 
     static int InitialWrite(IndentedWriter writer, int depthLimit, ISymbol symbol)
     {
@@ -63,7 +52,6 @@ public struct WriterDeclarationScope : IDisposable
         }
         yield return symbol;
     }
-
     static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, Func<ISymbol, bool> terminal)
     {
         var containings = Until(ReversedContainings(symbol), terminal).Reverse();
@@ -83,7 +71,6 @@ public struct WriterDeclarationScope : IDisposable
             }
         }
     }
-
     static IEnumerable<ISymbol> ReversedContainings(ISymbol symbol)
     {
         var current = symbol.ContainingType;
@@ -95,8 +82,6 @@ public struct WriterDeclarationScope : IDisposable
         if (!symbol.ContainingNamespace.IsGlobalNamespace)
             yield return symbol.ContainingNamespace;
     }
-
-
 
     public IndentedWriter Writer { get; }
     readonly int depth;
