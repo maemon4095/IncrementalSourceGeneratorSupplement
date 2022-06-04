@@ -42,13 +42,19 @@ namespace N.V
 
 var compilation = CreateCompilation(syntaxTree);
 var writer = new IndentedWriter("    ");
-var globalType = compilation.GetTypeByMetadataName("G");
-writer.DeclarationScope(globalType, (writer, type) =>
+var globalType = compilation.GetTypeByMetadataName("G")!;
+Console.WriteLine(globalType.ContainingSymbol);
+writer.DeclarationScope((globalType.ContainingSymbol as INamespaceSymbol)!, () =>
 {
     writer["//global"].Line();
 });
 var type = compilation.GetTypeByMetadataName("N.V.A`1")!;
-writer.DeclarationScope(type, (writer, type) =>
+Console.WriteLine(type.ContainingSymbol);
+
+var innerType = compilation.GetTypeByMetadataName("N.V.A`1+I")!;
+Console.WriteLine(innerType.ContainingSymbol);
+
+writer.DeclarationScope(type, () =>
 {
     writer["//Comment"].Line();
 });
@@ -59,21 +65,21 @@ foreach (var member in type.GetMembers())
     switch (member)
     {
         case INamedTypeSymbol t:
-            writer.DeclarationScope(t, (writer, type) =>
+            writer.DeclarationScope(t, () =>
             {
                 writer["//Type"].Line();
             });
             break;
         case INamespaceSymbol n:
-            writer.DeclarationScope(n, (writer, type) =>
+            writer.DeclarationScope(n, () =>
             {
                 writer["//Namespace"].Line();
             });
             break;
 
         case IMethodSymbol m:
-            if (m.MethodKind != MethodKind.Ordinary || m.MethodKind == MethodKind.ExplicitInterfaceImplementation) break;
-            writer.DeclarationScope(m, (writer, type) =>
+            if (m.MethodKind is not MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation) break;
+            writer.DeclarationScope(m, () =>
             {
                 writer["//Method"].Line();
             });
@@ -81,7 +87,7 @@ foreach (var member in type.GetMembers())
     }
 }
 
-writer.DeclarationScope(type, (writer, type) =>
+writer.DeclarationScope(type, () =>
 {
     foreach (var member in type.GetMembers())
     {
@@ -89,13 +95,13 @@ writer.DeclarationScope(type, (writer, type) =>
         switch (member)
         {
             case INamedTypeSymbol t:
-                writer.DeclarationScope(t, 0, (writer, type) =>
+                writer.DeclarationScope(t, 0, () =>
                 {
                     writer["//Type"].Line();
                 });
                 break;
             case INamespaceSymbol n:
-                writer.DeclarationScope(n, 0, (writer, type) =>
+                writer.DeclarationScope(n, 0, () =>
                 {
                     writer["//Namespace"].Line();
                 });
@@ -103,7 +109,7 @@ writer.DeclarationScope(type, (writer, type) =>
 
             case IMethodSymbol m:
                 if (m.MethodKind != MethodKind.Ordinary) break;
-                writer.DeclarationScope(m, 0, (writer, type) =>
+                writer.DeclarationScope(m, 0, () =>
                 {
                     writer["//Method"].Line();
                 });

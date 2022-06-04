@@ -30,116 +30,113 @@ public static class IndentedWriterExtension
     }
 
 
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol)
+    static WriterDeclarationScope DeclarationScopeCore(IndentedWriter writer, ISymbol symbol, int depth)
     {
-        return new(writer, symbol);
+        return new(writer, symbol, depth);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, Action<IndentedWriter, INamedTypeSymbol> action)
+    static IndentedWriter DeclarationScopeCore(IndentedWriter writer, ISymbol symbol, int depth, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol))
+        using (var scope = DeclarationScopeCore(writer, symbol, depth))
         {
-            action(scope.Writer, symbol);
-        }
-        return writer;
-    }
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol)
-    {
-        return new(writer, symbol);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, Action<IndentedWriter, INamespaceSymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
-    }
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol)
-    {
-        return new(writer, symbol);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, Action<IndentedWriter, IMethodSymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol))
-        {
-            action(scope.Writer, symbol);
+            action();
         }
         return writer;
     }
 
+    static WriterDeclarationScope DeclarationScopeCore(IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
+    {
+        return new(writer, symbol, terminal);
+    }
+    static IndentedWriter DeclarationScopeCore(IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal, Action action)
+    {
+        using (var scope = DeclarationScopeCore(writer, symbol, terminal))
+        {
+            action();
+        }
+        return writer;
+    }
+
+
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol)
+    {
+        return DeclarationScopeCore(writer, symbol, -1);
+    }
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, Action action)
+    {
+        return DeclarationScopeCore(writer, symbol, -1, action);
+    }
+
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol)
+    {
+        return DeclarationScopeCore(writer, symbol, -1);
+    }
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, Action action)
+    {
+        return DeclarationScopeCore(writer, symbol, -1, action);
+    }
+
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol)
+    {
+        return DeclarationScopeCore(writer, symbol, -1);
+    }
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, Action action)
+    {
+        return DeclarationScopeCore(writer, symbol, -1, action);
+    }
+
+
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, int depth)
+    {
+        return DeclarationScopeCore(writer, symbol, depth);
+    }
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, int depth, Action action)
+    {
+        return DeclarationScopeCore(writer, symbol, depth, action);
+    }
 
     public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, int depth)
     {
-        return new(writer, symbol, depth);
+        return DeclarationScopeCore(writer, symbol, depth);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, int depth, Action<IndentedWriter, INamedTypeSymbol> action)
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, int depth, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol, depth))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScopeCore(writer, symbol, depth, action);
     }
+
     public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, int depth)
     {
-        return new(writer, symbol, depth);
+        return DeclarationScopeCore(writer, symbol, depth);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, int depth, Action<IndentedWriter, INamespaceSymbol> action)
+    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, int depth, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol, depth))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
-    }
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, int depth)
-    {
-        return new(writer, symbol, depth);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, int depth, Action<IndentedWriter, IMethodSymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol, depth))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScopeCore(writer, symbol, depth, action);
     }
 
 
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, Func<ISymbol, bool> terminal)
+    public static WriterDeclarationScope DeclarationScope(IndentedWriter writer, IMethodSymbol symbol, Func<ISymbol, bool> terminal)
     {
-        return new(writer, symbol, terminal);
+        return DeclarationScopeCore(writer, symbol, terminal);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamedTypeSymbol symbol, Func<ISymbol, bool> terminal, Action<IndentedWriter, INamedTypeSymbol> action)
+    public static IndentedWriter DeclarationScope(IndentedWriter writer, IMethodSymbol symbol, Func<ISymbol, bool> terminal, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol, terminal))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScopeCore(writer, symbol, terminal, action);
     }
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, Func<ISymbol, bool> terminal)
+
+    public static WriterDeclarationScope DeclarationScope(IndentedWriter writer, INamedTypeSymbol symbol, Func<ISymbol, bool> terminal)
     {
-        return new(writer, symbol, terminal);
+        return DeclarationScopeCore(writer, symbol, terminal);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, INamespaceSymbol symbol, Func<ISymbol, bool> terminal, Action<IndentedWriter, INamespaceSymbol> action)
+    public static IndentedWriter DeclarationScope(IndentedWriter writer, INamedTypeSymbol symbol, Func<ISymbol, bool> terminal, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol, terminal))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScopeCore(writer, symbol, terminal, action);
     }
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, Func<ISymbol, bool> terminal)
+
+    public static WriterDeclarationScope DeclarationScope(IndentedWriter writer, INamespaceSymbol symbol, Func<ISymbol, bool> terminal)
     {
-        return new(writer, symbol, terminal);
+        return DeclarationScopeCore(writer, symbol, terminal);
     }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, IMethodSymbol symbol, Func<ISymbol, bool> terminal, Action<IndentedWriter, IMethodSymbol> action)
+    public static IndentedWriter DeclarationScope(IndentedWriter writer, INamespaceSymbol symbol, Func<ISymbol, bool> terminal, Action action)
     {
-        using (var scope = writer.DeclarationScope(symbol, terminal))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScopeCore(writer, symbol, terminal, action);
     }
 }

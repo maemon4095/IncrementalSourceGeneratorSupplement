@@ -35,9 +35,10 @@ public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrem
                  token.ThrowIfCancellationRequested();
                  var ((symbol, allAttributes), compilation) = tuple;
                  var result = this.CreateContext(compilation, allAttributes, out var context);
-                 if (!result) return default;
-                 return context;
+                 return (result, result ? context : default);
              })
+             .Where(c => c.result)
+             .Select((c, token) =>  c.Item2!)
              .WithComparer(this.GetBundleEqualityComparer());
     }
 
