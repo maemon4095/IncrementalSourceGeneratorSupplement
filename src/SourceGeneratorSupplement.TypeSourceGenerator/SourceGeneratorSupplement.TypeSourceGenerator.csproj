@@ -1,11 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\Common.props" />
 
 	<PropertyGroup>
+		<Version>0.0.0</Version>
+		<Description>A generator provides member source</Description>
 		<OutputType>library</OutputType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<LangVersion>latest</LangVersion>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<Deterministic>true</Deterministic>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
@@ -21,20 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SourceGeneratorSupplement" Version="0.1.0" PrivateAssets="all" GeneratePathProperty="true" />
-	</ItemGroup>
-	
-	<PropertyGroup>
-		<InternalLibraryPath>..\SourceGeneratorSupplement.Internal\bin\Release\netstandard2.0</InternalLibraryPath>
-	</PropertyGroup>
-		
-	<ItemGroup>
-	  <Reference Include="SourceGeneratorSupplement.Internal">
-	    <HintPath>$(InternalLibraryPath)\*.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="SourceGeneratorSupplement" Version="0.1.0" PrivateAssets="all" GeneratePathProperty="true" />		
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" GeneratePathProperty="true" />
 	</ItemGroup>
@@ -45,38 +35,19 @@
 
 	<Target Name="GetDependencyTargetPaths">
 		<ItemGroup>
+			<TargetPathWithTargetPlatformMoniker Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PkgSourceGeneratorSupplement_Internal)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
 		</ItemGroup>
 	</Target>
-
-	<!-- nuget -->
-	<PropertyGroup>
-		<Authors>maemon4095</Authors>
-		<Version>0.0.0</Version>
-		<Description>A generator provides member source</Description>
-		<Copyright>© maemon4095 2022</Copyright>
-		<PackageTags>sourcegenerator</PackageTags>
-		<PackageProjectUrl>https://github.com/maemon4095/SourceGeneratorSupplement</PackageProjectUrl>
-		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<!-- create nuget package as analyzer -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<!-- package dependency -->
-		<None Include="$(InternalLibraryPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PkgSourceGeneratorSupplement_Internal)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 </Project>

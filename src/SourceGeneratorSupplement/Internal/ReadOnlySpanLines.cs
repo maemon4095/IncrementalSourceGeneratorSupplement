@@ -1,7 +1,8 @@
 ﻿using System;
 
 namespace SourceGeneratorSupplement.Internal;
-public readonly ref struct ReadOnlySpanLines
+
+internal readonly ref struct ReadOnlySpanLines
 {
     public ref struct Enumerator
     {

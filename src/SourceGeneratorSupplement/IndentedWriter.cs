@@ -41,7 +41,7 @@ public class IndentedWriter : TextWriter
 
     public override Encoding Encoding => Encoding.Unicode;
 
-    public unsafe IndentedWriter this[ReadOnlySpan<char> span]
+    public IndentedWriter this[ReadOnlySpan<char> span]
     {
         get
         {
