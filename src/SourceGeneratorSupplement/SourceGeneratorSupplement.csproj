@@ -30,6 +30,10 @@
 		<None Include="..\..\LICENSE" Pack="true" PackagePath="\"></None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\SourceGeneratorSupplement.Internal\SourceGeneratorSupplement.Internal.csproj" />
+	</ItemGroup>
+
 
 	<!-- T4 -->
 	<ItemGroup>

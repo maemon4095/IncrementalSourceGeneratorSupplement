@@ -21,7 +21,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj" />
+		<!-- this package is not an analyzer, but to pack the package, OutputItemType is set to Analyzer.  -->
+		<ProjectReference Include="..\SourceGeneratorSupplement.Internal\SourceGeneratorSupplement.Internal.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
+		<ProjectReference Include="..\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,64 +1,16 @@
 ﻿using System.Text;
+using SourceGeneratorSupplement.Internal;
 
 namespace SourceGeneratorSupplement;
+
 public class IndentedWriter : TextWriter
 {
-    enum NewLineCategory
-    {
-        None, CR, LF, CRLF
-    }
-    struct NewLineDeterminator
-    {
-
-        public NewLineDeterminator()
-        {
-            this.Category = NewLineCategory.None;
-        }
-
-        public NewLineCategory Category { get; private set; }
-
-
-        public bool Transition(char chara)
-        {
-            switch (this.Category)
-            {
-                case NewLineCategory.CR:
-                    switch (chara)
-                    {
-                        case '\n':
-                            this.Category = NewLineCategory.CRLF;
-                            return false;
-                        default:
-                            this.Category = NewLineCategory.CR;
-                            return false;
-                    }
-                default:
-                    switch (chara)
-                    {
-                        case '\r':
-                            this.Category = NewLineCategory.CR;
-                            return true;
-                        case '\n':
-                            this.Category = NewLineCategory.LF;
-                            return false;
-                        default:
-                            this.Category = NewLineCategory.None;
-                            return false;
-                    }
-            }
-        }
-
-        public void Reset()
-        {
-            this.Category = NewLineCategory.None;
-        }
-    }
-
     static void WriteIndent(StringBuilder builder, string indent, int level)
     {
-        for (; level > 0; --level)
+        while (level > 0)
         {
             builder.Append(indent);
+            level--;
         }
     }
 
@@ -69,7 +21,7 @@ public class IndentedWriter : TextWriter
         this.IndentString = indent;
         this.CoreNewLine = newLine.ToCharArray();
         this.IndentLevel = 0;
-        this.determinator = new NewLineDeterminator();
+        this.detector = new NewLineDetector();
     }
     public IndentedWriter(string indent)
         : this(indent, Environment.NewLine)
@@ -83,7 +35,7 @@ public class IndentedWriter : TextWriter
 
     readonly StringBuilder builder;
     bool tabPending;
-    NewLineDeterminator determinator;
+    NewLineDetector detector;
     public int IndentLevel { get; set; }
     public string IndentString { get; }
 
@@ -114,15 +66,15 @@ public class IndentedWriter : TextWriter
     public override void Write(char chara)
     {
         if (this.tabPending) this.FlushIndent();
-        if (!this.determinator.Transition(chara))
+        if (!this.detector.Transition(chara))
         {
-            switch (this.determinator.Category)
+            switch (this.detector.Category)
             {
                 case NewLineCategory.None: break;
                 case NewLineCategory.CR: this.FlushIndent(); break;
                 default: this.tabPending = true; break;
             }
-            this.determinator.Reset();
+            this.detector.Reset();
         }
         this.builder.Append(chara);
     }
@@ -138,26 +90,26 @@ public class IndentedWriter : TextWriter
     {
         var builder = this.builder;
         var tabPending = this.tabPending;
-        var determinator = this.determinator;
+        var detector = this.detector;
         var level = this.IndentLevel;
         var indent = this.IndentString;
         foreach (var chara in span)
         {
             if (tabPending) { WriteIndent(builder, indent, level); tabPending = false; }
-            if (!determinator.Transition(chara))
+            if (!detector.Transition(chara))
             {
-                switch (determinator.Category)
+                switch (detector.Category)
                 {
                     case NewLineCategory.None: break;
                     case NewLineCategory.CR: this.FlushIndent(); break;
                     default: tabPending = true; break;
                 }
-                determinator.Reset();
+                detector.Reset();
             }
             builder.Append(chara);
         }
         this.tabPending = tabPending;
-        this.determinator = determinator;
+        this.detector = detector;
     }
 
     public IndentedWriter Line()
@@ -168,6 +120,13 @@ public class IndentedWriter : TextWriter
     }
     public void End()
     {
+        switch (this.detector.Category)
+        {
+            case NewLineCategory.CR:
+                this.tabPending = true;
+                this.detector.Reset();
+                break;
+        }
     }
 
     public IndentedWriter Indent(int delta)
@@ -178,7 +137,7 @@ public class IndentedWriter : TextWriter
     void FlushIndent()
     {
         WriteIndent(this.builder, this.IndentString, this.IndentLevel);
-        this.determinator.Reset();
+        this.detector.Reset();
         this.tabPending = false;
     }
 

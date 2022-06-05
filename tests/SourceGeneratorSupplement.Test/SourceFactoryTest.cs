@@ -1,7 +1,7 @@
 using SourceGeneratorSupplement.Factory;
-namespace SourceGeneratorSupplement.Test;
-using static Test.TestHelper;
+using static SourceGeneratorSupplement.Test.TestHelper;
 
+namespace SourceGeneratorSupplement.Test;
 public class SourceFactoryTest
 {
     [Fact]
@@ -14,7 +14,7 @@ partial class A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -31,7 +31,7 @@ partial struct A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -48,7 +48,7 @@ partial interface A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -65,7 +65,7 @@ sealed partial class A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -82,7 +82,7 @@ sealed class A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -99,7 +99,7 @@ readonly partial struct A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -116,7 +116,7 @@ readonly struct A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -133,7 +133,7 @@ record A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -151,7 +151,7 @@ record struct A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -168,7 +168,7 @@ partial record A(int X)
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -186,7 +186,7 @@ record A(int x)
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -203,7 +203,7 @@ class A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -220,7 +220,7 @@ static class A
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -238,7 +238,7 @@ namespace Containing
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("Containing.A");
+        var symbol = compilation.GetTypeByMetadataName("Containing.A")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -256,7 +256,7 @@ class Containing
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("Containing+Nested");
+        var symbol = compilation.GetTypeByMetadataName("Containing+Nested")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -298,7 +298,7 @@ namespace Namespace
 
         var compilation = CreateCompilation(syntaxTree);
 
-        var symbol = compilation.GetTypeByMetadataName("Namespace.Containing+Nested");
+        var symbol = compilation.GetTypeByMetadataName("Namespace.Containing+Nested")!;
 
         var decl = SourceFactory.GetDeclaration(symbol);
 
@@ -316,7 +316,7 @@ class A<T>
 }");
 
         var compilation = CreateCompilation(syntaxTree);
-        var symbol = compilation.GetTypeByMetadataName("A`1");
+        var symbol = compilation.GetTypeByMetadataName("A`1")!;
         var decl = SourceFactory.GetDeclaration(symbol);
 
         Assert.Equal("class A<T> ", decl);

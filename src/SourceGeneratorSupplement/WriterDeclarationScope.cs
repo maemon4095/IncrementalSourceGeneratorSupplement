@@ -4,33 +4,17 @@ using SourceGeneratorSupplement.Factory;
 namespace SourceGeneratorSupplement;
 public struct WriterDeclarationScope : IDisposable
 {
-    public WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, int depth)
+    public WriterDeclarationScope(IndentedWriter writer, ISymbol? symbol, int depth, Func<ISymbol, bool>? terminal)
     {
         this.Writer = writer;
-        this.depth = InitialWrite(writer, depth, symbol);
-    }
-    public WriterDeclarationScope(IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
-    {
-        this.Writer = writer;
-        this.depth = InitialWrite(writer, terminal, symbol);
+        this.depth = InitialWrite(writer, symbol, depth, terminal);
     }
 
-    static int InitialWrite(IndentedWriter writer, int depthLimit, ISymbol symbol)
+    static int InitialWrite(IndentedWriter writer, ISymbol? symbol, int depthLimit, Func<ISymbol, bool>? terminal)
     {
+        if (symbol is null) return 0;
         var depth = 0;
-        foreach (var containing in ContainingsAndSelf(symbol, depthLimit))
-        {
-            writer[SourceFactory.GetDeclaration(containing)].Line()
-                  ['{'].Line().Indent(1);
-
-            depth++;
-        }
-        return depth;
-    }
-    static int InitialWrite(IndentedWriter writer, Func<ISymbol, bool> terminal, ISymbol symbol)
-    {
-        var depth = 0;
-        foreach (var containing in ContainingsAndSelf(symbol, terminal))
+        foreach (var containing in ContainingsAndSelf(symbol, depthLimit, terminal))
         {
             writer[SourceFactory.GetDeclaration(containing)].Line()
                   ['{'].Line().Indent(1);
@@ -40,21 +24,13 @@ public struct WriterDeclarationScope : IDisposable
         return depth;
     }
 
-    static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, int depth)
+    static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, int depth, Func<ISymbol, bool>? terminal)
     {
+        if (depth == 0) yield break;
+        if (symbol is INamespaceSymbol { IsGlobalNamespace: true }) yield break;
         var reversed = ReversedContainings(symbol);
-        var containings = (depth < 0 ? reversed : reversed.Take(depth)).Reverse();
-
-        foreach (var containing in containings)
-        {
-            yield return containing;
-        }
-        yield return symbol;
-    }
-
-    static IEnumerable<ISymbol> ContainingsAndSelf(ISymbol symbol, Func<ISymbol, bool> terminal)
-    {
-        var containings = Until(ReversedContainings(symbol), terminal).Reverse();
+        var taken = depth < 0 ? reversed : reversed.Take(depth - 1);
+        var containings = (terminal is null ? taken : Until(taken, terminal)).Reverse();
 
         foreach (var containing in containings)
         {
@@ -80,11 +56,9 @@ public struct WriterDeclarationScope : IDisposable
             yield return current;
             current = current.ContainingType;
         }
-        if (!symbol.ContainingNamespace.IsGlobalNamespace)
+        if (symbol.ContainingNamespace is not null && !symbol.ContainingNamespace.IsGlobalNamespace)
             yield return symbol.ContainingNamespace;
     }
-
-
 
     public IndentedWriter Writer { get; }
     readonly int depth;
