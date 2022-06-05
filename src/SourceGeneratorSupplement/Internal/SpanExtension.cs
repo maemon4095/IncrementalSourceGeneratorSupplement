@@ -2,7 +2,7 @@
 
 namespace SourceGeneratorSupplement.Internal;
 
-public static class SpanExtension
+internal static class SpanExtension
 {
     public static ReadOnlySpanLines EnumerateLines(this string text)
     {

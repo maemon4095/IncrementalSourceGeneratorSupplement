@@ -1,6 +1,6 @@
 ﻿namespace SourceGeneratorSupplement.Internal;
 
-public struct NewLineDetector
+internal struct NewLineDetector
 {
     public NewLineDetector()
     {
