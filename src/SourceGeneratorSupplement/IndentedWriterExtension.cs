@@ -16,6 +16,7 @@ public static class IndentedWriterExtension
         }
         return writer;
     }
+
     public static WriterBlockScope BlockScope(this IndentedWriter writer, int level)
     {
         return new(writer, "{", "}", level);
@@ -28,7 +29,6 @@ public static class IndentedWriterExtension
         }
         return writer;
     }
-
 
     public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol? symbol, int depth = -1, Func<ISymbol, bool>? terminal = null)
     {

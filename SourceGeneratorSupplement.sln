@@ -20,6 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement.TypeSourceGenerator", "src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj", "{BCA680CB-416F-466C-AC97-9C6BE0845B68}"
 EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
