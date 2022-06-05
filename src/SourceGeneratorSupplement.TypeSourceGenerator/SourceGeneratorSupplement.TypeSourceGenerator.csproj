@@ -22,7 +22,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="SourceGeneratorSupplement" Version="0.1.0" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="SourceGeneratorSupplement.Internal" Version="1.0.0" PrivateAssets="all" GeneratePathProperty="true" />
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<InternalLibraryPath>..\SourceGeneratorSupplement.Internal\bin\Release\netstandard2.0</InternalLibraryPath>
+	</PropertyGroup>
+		
+	<ItemGroup>
+	  <Reference Include="SourceGeneratorSupplement.Internal">
+	    <HintPath>$(InternalLibraryPath)\*.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -56,13 +65,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\LICENSE" Pack="true" PackagePath="\"></None>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- create nuget package as analyzer -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<!-- package dependency -->
+		<None Include="$(InternalLibraryPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
