@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<Import Project="..\..\Common.props" />
+	
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
@@ -9,10 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</ProjectReference>
+		<ProjectReference Include="..\..\src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj" OutputItemType="Analyzer"/>
 		<ProjectReference Include="..\..\src\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj" />
 	</ItemGroup>
 

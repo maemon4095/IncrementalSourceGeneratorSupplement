@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{91AD1FB1-DBCC-4B35-A6E0-31BEF7B47113}"
+	ProjectSection(SolutionItems) = preProject
+		Common.props = Common.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{68E81CE1-B25F-4AAE-AD65-286C5A9E84C6}"
 EndProject
@@ -15,8 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement.T
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement", "src\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj", "{6613AC03-04BC-4B17-AA70-12C95CC17C7C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement.Internal", "src\SourceGeneratorSupplement.Internal\SourceGeneratorSupplement.Internal.csproj", "{BCC4A6B4-AEAC-4F35-8048-2F918405E27A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGeneratorSupplement.TypeSourceGenerator", "src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj", "{BCA680CB-416F-466C-AC97-9C6BE0845B68}"
 EndProject
@@ -39,10 +40,6 @@ Global
 		{6613AC03-04BC-4B17-AA70-12C95CC17C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6613AC03-04BC-4B17-AA70-12C95CC17C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6613AC03-04BC-4B17-AA70-12C95CC17C7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCC4A6B4-AEAC-4F35-8048-2F918405E27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCC4A6B4-AEAC-4F35-8048-2F918405E27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCC4A6B4-AEAC-4F35-8048-2F918405E27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCC4A6B4-AEAC-4F35-8048-2F918405E27A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCA680CB-416F-466C-AC97-9C6BE0845B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCA680CB-416F-466C-AC97-9C6BE0845B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCA680CB-416F-466C-AC97-9C6BE0845B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,7 +52,6 @@ Global
 		{10D6AD13-D798-409B-9A64-786380A3387C} = {68E81CE1-B25F-4AAE-AD65-286C5A9E84C6}
 		{3BC1CAFB-531A-4FDF-9316-8648811DCD84} = {68E81CE1-B25F-4AAE-AD65-286C5A9E84C6}
 		{6613AC03-04BC-4B17-AA70-12C95CC17C7C} = {91AD1FB1-DBCC-4B35-A6E0-31BEF7B47113}
-		{BCC4A6B4-AEAC-4F35-8048-2F918405E27A} = {91AD1FB1-DBCC-4B35-A6E0-31BEF7B47113}
 		{BCA680CB-416F-466C-AC97-9C6BE0845B68} = {91AD1FB1-DBCC-4B35-A6E0-31BEF7B47113}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

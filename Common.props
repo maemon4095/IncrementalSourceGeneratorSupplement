@@ -1,0 +1,16 @@
+﻿<Project>
+	<PropertyGroup>
+		<Authors>maemon4095</Authors>
+		<Copyright>© maemon4095 2022</Copyright>
+		<PackageTags>sourcegenerator</PackageTags>
+		<PackageProjectUrl>https://github.com/maemon4095/SourceGeneratorSupplement</PackageProjectUrl>
+		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="\"></None>
+	</ItemGroup>
+</Project>
