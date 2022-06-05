@@ -1,10 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	
+	<!-- variable defaults -->
+	<PropertyGroup>
+		<BuildFlag Condition="'$(BuildFlag)'==''">
+			internal
+		</BuildFlag>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(BuildFlag)'=='publish'">
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(BuildFlag)'=='internal'">
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="System.CodeDom" Version="6.0.0" PrivateAssets="all" />
@@ -13,4 +28,9 @@
 	</ItemGroup>
 
 
+	<!-- nuget -->
+	<PropertyGroup>
+		<Authors>maemon4095</Authors>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
 </Project>

@@ -21,9 +21,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- this package is not an analyzer, but to pack the package, OutputItemType is set to Analyzer.  -->
-		<ProjectReference Include="..\SourceGeneratorSupplement.Internal\SourceGeneratorSupplement.Internal.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
-		<ProjectReference Include="..\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
+		<PackageReference Include="SourceGeneratorSupplement" Version="0.1.0" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="SourceGeneratorSupplement.Internal" Version="1.0.0" PrivateAssets="all" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,6 +38,8 @@
 		<ItemGroup>
 			<TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+			<TargetPathWithTargetPlatformMoniker Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+			<TargetPathWithTargetPlatformMoniker Include="$(PkgSourceGeneratorSupplement_Internal)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
 		</ItemGroup>
 	</Target>
 
@@ -64,6 +65,8 @@
 		<!-- package dependency -->
 		<None Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PkgMicrosoft_CodeAnalysis_Analyzers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgSourceGeneratorSupplement)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgSourceGeneratorSupplement_Internal)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 </Project>
