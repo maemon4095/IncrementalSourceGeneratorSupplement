@@ -1,10 +1,18 @@
-﻿namespace SourceGeneratorSupplement.Test;
+﻿using Xunit.Abstractions;
+namespace SourceGeneratorSupplement.Test;
 public class WriterScopesTest
 {
     static string Repeat(string str, int count)
     {
         return string.Join("", Enumerable.Repeat(str, count));
     }
+
+    public WriterScopesTest(ITestOutputHelper helper)
+    {
+        this.helper = helper;
+    }
+
+    readonly ITestOutputHelper helper;
 
     [Fact]
     public void Block()
@@ -51,7 +59,7 @@ class A
         var compilation = TestHelper.CreateCompilation(syntaxTree);
         var writer = new IndentedWriter(indent);
 
-        var symbol = compilation.GetTypeByMetadataName("A");
+        var symbol = compilation.GetTypeByMetadataName("A")!;
 
         using (var scope = writer.DeclarationScope(symbol))
         {
@@ -82,7 +90,7 @@ namespace X.Y
             var compilation = TestHelper.CreateCompilation(syntaxTree);
             var writer = new IndentedWriter(indent);
 
-            var symbol = compilation.GetTypeByMetadataName("X.Y.C+S");
+            var symbol = compilation.GetTypeByMetadataName("X.Y.C+S")!;
 
             using (var scope = writer.DeclarationScope(symbol))
             {
@@ -120,7 +128,7 @@ namespace X.Y
         var compilation = TestHelper.CreateCompilation(syntaxTree);
         var writer = new IndentedWriter(indent);
         var symbol = compilation.GetTypeByMetadataName("X.Y.C+S")!;
-        using (var scope = writer.DeclarationScope(symbol, 1))
+        using (var scope = writer.DeclarationScope(symbol, 2))
         {
             scope.Writer["//nested"].Line();
         }
@@ -155,9 +163,9 @@ namespace X.Y
         var writer = new IndentedWriter(indent);
         var symbol = compilation.GetTypeByMetadataName("X.Y.C+S")!;
         var containingClassSymbol = symbol.ContainingType;
-        using (var scope = writer.DeclarationScope(symbol, (symbol) => SymbolEqualityComparer.Default.Equals(symbol, containingClassSymbol)))
+        using (writer.DeclarationScope(symbol, (symbol) => SymbolEqualityComparer.Default.Equals(symbol, containingClassSymbol)))
         {
-            scope.Writer["//nested"].Line();
+            writer["//nested"].Line();
         }
 
         Assert.Equal(@"partial class C 

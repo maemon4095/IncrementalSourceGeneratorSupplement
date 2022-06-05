@@ -5,6 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,10 +14,14 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\SourceGeneratorSupplement.Internal\SourceGeneratorSupplement.Internal.csproj" PrivateAssets="all" />
+	</ItemGroup>
+
 	<!-- nuget -->
 	<PropertyGroup>
 		<Authors>maemon4095</Authors>
-		<Version>0.0.2</Version>
+		<Version>0.1.0</Version>
 		<Description>Supplemental tools for source generation.</Description>
 		<Copyright>© maemon4095 2022</Copyright>
 		<PackageTags>sourcegenerator</PackageTags>
@@ -24,13 +29,12 @@
 		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="..\..\LICENSE" Pack="true" PackagePath="\"></None>
 	</ItemGroup>
 
-
-	<!-- T4 -->	
+	<!-- T4 -->
 	<ItemGroup>
 		<None Update="Factory\Keyword.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
@@ -45,6 +49,6 @@
 
 	<!-- VS T4 Service -->
 	<ItemGroup>
-	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>	
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
 </Project>

@@ -24,10 +24,14 @@ namespace N.V
         public static partial void Y(ref int x, in int y, out int z);
         void IFoo.Z() { }
         public int P { get; set; }
-    
-        class I
+
+        public class I
         {
         }
+    }
+
+    abstract class Ab
+    {
     }
 
     enum E
@@ -36,87 +40,9 @@ namespace N.V
     }
 }");
 
-var compilation = CreateCompilation(syntaxTree);
-var writer = new IndentedWriter("    ");
-var globalType = compilation.GetTypeByMetadataName("G")!;
-Console.WriteLine(globalType.ContainingSymbol);
-writer.DeclarationScope(globalType.ContainingSymbol, (writer, type) =>
-{
-    writer["//global"].Line();
-});
-var type = compilation.GetTypeByMetadataName("N.V.A`1")!;
-Console.WriteLine(type.ContainingSymbol);
+var root = syntaxTree.GetCompilationUnitRoot();
 
-var innerType = compilation.GetTypeByMetadataName("N.V.A`1+I")!;
-Console.WriteLine(innerType.ContainingSymbol);
-
-writer.DeclarationScope(type, (writer, type) =>
-{
-    writer["//Comment"].Line();
-});
-
-foreach (var member in type.GetMembers())
-{
-    if (member.IsImplicitlyDeclared) continue;
-    switch (member)
-    {
-        case INamedTypeSymbol t:
-            writer.DeclarationScope(t, (writer, type) =>
-            {
-                writer["//Type"].Line();
-            });
-            break;
-        case INamespaceSymbol n:
-            writer.DeclarationScope(n, (writer, type) =>
-            {
-                writer["//Namespace"].Line();
-            });
-            break;
-
-        case IMethodSymbol m:
-            if (m.MethodKind is not MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation) break;
-            writer.DeclarationScope(m, (writer, type) =>
-            {
-                writer["//Method"].Line();
-            });
-            break;
-    }
-}
-
-writer.DeclarationScope(type, (writer, type) =>
-{
-    foreach (var member in (type as INamespaceOrTypeSymbol).GetMembers())
-    {
-        if (member.IsImplicitlyDeclared) continue;
-        switch (member)
-        {
-            case INamedTypeSymbol t:
-                writer.DeclarationScope(t, 0, (writer, type) =>
-                {
-                    writer["//Type"].Line();
-                });
-                break;
-            case INamespaceSymbol n:
-                writer.DeclarationScope(n, 0, (writer, type) =>
-                {
-                    writer["//Namespace"].Line();
-                });
-                break;
-
-            case IMethodSymbol m:
-                if (m.MethodKind != MethodKind.Ordinary) break;
-                writer.DeclarationScope(m, 0, (writer, type) =>
-                {
-                    writer["//Method"].Line();
-                });
-                break;
-        }
-    }
-});
-
-
-
-Console.WriteLine(writer);
+Console.WriteLine(Source.D());
 
 Console.ReadLine();
 
@@ -129,4 +55,38 @@ static Compilation CreateCompilation(params SyntaxTree[] syntaxTrees)
 static SyntaxTree CreateSyntaxTree(string source)
 {
     return CSharpSyntaxTree.ParseText(source, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest));
+}
+
+
+
+partial class Source
+{
+    [TypeSource(typeof(A))]
+    public static partial string A();
+    [TypeSource(typeof(B))]
+    public static partial string B();   
+    [TypeSource(typeof(B.C))]
+    public static partial string C();
+    [TypeSource(typeof(B.D), 1)]
+    public static partial string D();
+}
+
+
+class A
+{
+    public string Text { get; }
+}
+
+class B
+{
+    public class C
+    {
+        public static int StaticMethod() => 0;
+        public void Method() { }
+    }
+
+    public class D
+    {
+
+    }
 }

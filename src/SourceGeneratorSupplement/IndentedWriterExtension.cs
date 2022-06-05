@@ -30,42 +30,13 @@ public static class IndentedWriterExtension
         return writer;
     }
 
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol symbol)
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol? symbol, int depth = -1, Func<ISymbol, bool>? terminal = null)
     {
-        return new(writer, symbol);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, ISymbol symbol, Action<IndentedWriter, ISymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return new(writer, symbol, depth, terminal);
     }
 
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol symbol, int depth)
+    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol? symbol, Func<ISymbol, bool>? terminal)
     {
-        return new(writer,symbol, depth);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, ISymbol symbol, int depth, Action<IndentedWriter, ISymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol, depth))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
-    }
-
-    public static WriterDeclarationScope DeclarationScope(this IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal)
-    {
-        return new(writer, symbol, terminal);
-    }
-    public static IndentedWriter DeclarationScope(this IndentedWriter writer, ISymbol symbol, Func<ISymbol, bool> terminal, Action<IndentedWriter, ISymbol> action)
-    {
-        using (var scope = writer.DeclarationScope(symbol, terminal))
-        {
-            action(scope.Writer, symbol);
-        }
-        return writer;
+        return DeclarationScope(writer, symbol, -1, terminal);
     }
 }
