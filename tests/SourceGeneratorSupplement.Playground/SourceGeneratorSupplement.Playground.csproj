@@ -8,10 +8,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj" OutputItemType="Analyzer"/>
+		<ProjectReference Include="..\..\src\SourceGeneratorSupplement.TypeSourceGenerator\SourceGeneratorSupplement.TypeSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
 		<ProjectReference Include="..\..\src\SourceGeneratorSupplement\SourceGeneratorSupplement.csproj" />
 	</ItemGroup>
 
