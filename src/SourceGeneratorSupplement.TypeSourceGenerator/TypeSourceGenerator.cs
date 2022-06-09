@@ -53,12 +53,13 @@ namespace {nameof(SourceGeneratorSupplement)}
                     if (args.Length < 1) return default;
                     if (args[0].Value is not INamedTypeSymbol type) return default;
                     var depth = args.Select(a => a.Value).ElementAtOrDefault(1) as int? ?? 0;
-                    return (Symbol: (symbol as IMethodSymbol)!, Type: type, Depth: Math.Max(depth - 1, -1));
+                    var location = attributeData.ApplicationSyntaxReference?.GetSyntax().GetLocation();
+                    return (Symbol: (symbol as IMethodSymbol)!, Type: type, Depth: Math.Max(depth - 1, -1), Location: location);
                 })
                 .Select((pair, token) =>
                 {
                     token.ThrowIfCancellationRequested();
-                    return new Bundle(pair.Symbol, pair.Type, pair.Depth);
+                    return new Bundle(pair.Symbol, pair.Type, pair.Depth, pair.Location);
                 });
 
         context.RegisterSourceOutput(provider, this.ProductSource);
@@ -66,73 +67,73 @@ namespace {nameof(SourceGeneratorSupplement)}
 
     void ProductSource(SourceProductionContext context, Bundle bundle)
     {
-        try
+        var refs = bundle.Type.DeclaringSyntaxReferences;
+        if (refs.Length <= 0)
         {
-            var writer = new IndentedWriter("    ");
-            using (writer.DeclarationScope(bundle.Method))
+            context.ReportDiagnostic(Diagnostics.ImplementationWasNotFound(bundle.Location, bundle.Type));
+            return;
+        }
+        var writer = new IndentedWriter("    ");
+        using (writer.DeclarationScope(bundle.Method))
+        {
+            writer["return @\""].End();
+            var indentLevel = writer.IndentLevel;
+            writer.IndentLevel = 0;
+            foreach (var r in refs)
             {
-                var refs = bundle.Type.DeclaringSyntaxReferences;
-                writer["return @\""].End();
-                var indentLevel = writer.IndentLevel;
-                writer.IndentLevel = 0;
-                foreach (var r in refs)
+                using (writer.DeclarationScope(bundle.Type.ContainingSymbol, bundle.DepthLimit))
                 {
-                    using (writer.DeclarationScope(bundle.Type.ContainingSymbol, bundle.DepthLimit))
+                    //remove trailing trivia because it does not affect indent level
+                    var str = r.GetSyntax().WithoutTrailingTrivia().ToFullString();
+                    var minindent = -1;
+
+                    foreach (var line in str.EnumerateLines())
                     {
-                        //remove trailing trivia because it does not affect indent level
-                        var str = r.GetSyntax().WithoutTrailingTrivia().ToFullString();
-                        var minindent = -1;
+                        var indent = line.Length - line.TrimStart().Length;
+                        //skip whitespace line
+                        if (indent == line.Length) continue;
+                        if ((uint)indent < (uint)minindent) minindent = indent;
+                        if (minindent == 0) break;
+                    }
+                    if (minindent < 0) minindent = 0;
 
-                        foreach (var line in str.EnumerateLines())
+                    //remove lines before declaration
+                    var leading = true;
+                    foreach (var line in str.EnumerateLines())
+                    {
+                        if (leading && line.IsWhiteSpace()) continue;
+                        leading = false;
+                        if (line.Length <= minindent)
                         {
-                            var indent = line.Length - line.TrimStart().Length;
-                            //skip whitespace line
-                            if (indent == line.Length) continue;
-                            if ((uint)indent < (uint)minindent) minindent = indent;
-                            if (minindent == 0) break;
+                            writer.Line();
                         }
-                        if (minindent < 0) minindent = 0;
-
-                        //remove lines before declaration
-                        var leading = true;
-                        foreach (var line in str.EnumerateLines())
+                        else
                         {
-                            if (leading && line.IsWhiteSpace()) continue;
-                            leading = false;
-                            if (line.Length <= minindent)
-                            {
-                                writer.Line();
-                            }
-                            else
-                            {
-                                writer[line.Slice(minindent)].Line();
-                            }
+                            writer[line.Slice(minindent)].Line();
                         }
                     }
                 }
-                writer["\";"].Line();
-                writer.IndentLevel = indentLevel;
             }
+            writer["\";"].Line();
+            writer.IndentLevel = indentLevel;
+        }
 
-            context.AddSource($"Source.{bundle.Method.ContainingType}.{bundle.Method.Name}.g.cs", writer.ToString());
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"{ex.GetType()} was thrown. Message: {ex.Message.Replace("\r\n", "").Replace("\r", "").Replace("\n", "")} StackTrace: {ex.StackTrace.Replace(Environment.NewLine, " - ")}");
-        }
+        context.AddSource($"{nameof(SourceGeneratorSupplement)}.{nameof(TypeSourceGenerator)}.{bundle.Method.ContainingType}.{bundle.Method.Name}.g.cs", writer.ToString());
     }
 
     readonly struct Bundle
     {
-        public Bundle(IMethodSymbol method, ITypeSymbol type, int depthLimit)
+        public Bundle(IMethodSymbol method, INamedTypeSymbol type, int depthLimit, Location? location)
         {
             this.Method = method;
             this.Type = type;
             this.DepthLimit = depthLimit;
+            this.Location = location ?? Location.None;
         }
 
+        public Location Location { get; }
         public IMethodSymbol Method { get; }
-        public ITypeSymbol Type { get; }
+        public INamedTypeSymbol Type { get; }
         public int DepthLimit { get; }
     }
 }
