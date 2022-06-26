@@ -3,7 +3,7 @@
 	<Import Project="..\..\Common.props" />
 
 	<PropertyGroup>
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 		<Description>A generator provides member source</Description>
 		<OutputType>library</OutputType>
 		<TargetFramework>netstandard2.0</TargetFramework>

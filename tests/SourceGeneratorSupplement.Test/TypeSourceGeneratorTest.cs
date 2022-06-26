@@ -39,7 +39,7 @@ public partial class Source
 }
 ";
         var result = this.runner.Run(source);
-        var generated = result.GeneratedSources.First(s => s.HintName == "Source.Source.A.g.cs");
+        var generated = result.GeneratedSources.First(s => s.HintName == "SourceGeneratorSupplement.TypeSourceGenerator.Source.A.g.cs");
         var generatedSource = generated.SourceText.ToString();
 
 
@@ -86,7 +86,7 @@ public partial class Source
 }
 ";
         var result = this.runner.Run(source);
-        var generated = result.GeneratedSources.First(s => s.HintName == "Source.Source.A.g.cs");
+        var generated = result.GeneratedSources.First(s => s.HintName == "SourceGeneratorSupplement.TypeSourceGenerator.Source.A.g.cs");
         var generatedSource = generated.SourceText.ToString();
 
         helper.WriteLine($"//{generated.HintName}");
