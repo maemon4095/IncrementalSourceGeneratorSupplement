@@ -69,8 +69,6 @@ partial class Source
     public static partial string C();
     [TypeSource(typeof(B.D), 1)]
     public static partial string D();
-    [TypeSource(typeof(int))]
-    public static partial string E();
 }
 
 

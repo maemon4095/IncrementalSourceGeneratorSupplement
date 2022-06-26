@@ -84,7 +84,8 @@ namespace {nameof(SourceGeneratorSupplement)}
                 using (writer.DeclarationScope(bundle.Type.ContainingSymbol, bundle.DepthLimit))
                 {
                     //remove trailing trivia because it does not affect indent level
-                    var str = r.GetSyntax().WithoutTrailingTrivia().ToFullString();
+                    var syntax = r.GetSyntax().WithoutTrailingTrivia();
+                    var str = syntax.ToFullString();
                     var minindent = -1;
 
                     foreach (var line in str.EnumerateLines())
@@ -97,20 +98,12 @@ namespace {nameof(SourceGeneratorSupplement)}
                     }
                     if (minindent < 0) minindent = 0;
 
-                    //remove lines before declaration
-                    var leading = true;
-                    foreach (var line in str.EnumerateLines())
+                    //leading trivia contains pragma directive so remove it
+                    foreach (var line in syntax.WithoutLeadingTrivia().ToFullString().EnumerateLines())
                     {
-                        if (leading && line.IsWhiteSpace()) continue;
-                        leading = false;
-                        if (line.Length <= minindent)
-                        {
-                            writer.Line();
-                        }
-                        else
-                        {
-                            writer[line.Slice(minindent)].Line();
-                        }
+                        var trimmed = line.TrimStart();
+                        var indent = line.Length - trimmed.Length;
+                        writer[indent <= minindent ? trimmed : line.Slice(minindent)].Line();
                     }
                 }
             }
