@@ -9,7 +9,6 @@ public struct WriterDeclarationScope : IDisposable
         this.Writer = writer;
         this.depth = InitialWrite(writer, symbol, depth, terminal);
     }
-
     static int InitialWrite(IndentedWriter writer, ISymbol? symbol, int depthLimit, Func<ISymbol, bool>? terminal)
     {
         if (symbol is null) return 0;
@@ -47,7 +46,6 @@ public struct WriterDeclarationScope : IDisposable
             }
         }
     }
-
     static IEnumerable<ISymbol> ReversedContainings(ISymbol symbol)
     {
         var current = symbol.ContainingType;

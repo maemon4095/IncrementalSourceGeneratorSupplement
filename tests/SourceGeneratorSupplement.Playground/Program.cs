@@ -42,7 +42,6 @@ namespace N.V
 
 var root = syntaxTree.GetCompilationUnitRoot();
 
-
 Console.WriteLine(Source.D());
 
 Console.ReadLine();
