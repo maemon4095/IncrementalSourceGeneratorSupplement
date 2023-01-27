@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace SourceGeneratorSupplement;
 
-public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrementalGenerator
+public abstract class IncrementalSourceGeneratorBase<TSyntax, TModel> : IIncrementalGenerator
     where TSyntax : MemberDeclarationSyntax
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -13,7 +13,7 @@ public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrem
         var syntaxProvider = this.CreateSyntaxProvider(context);
         context.RegisterSourceOutput(syntaxProvider, this.AddSource);
     }
-    IncrementalValuesProvider<TBundle> CreateSyntaxProvider(IncrementalGeneratorInitializationContext context)
+    IncrementalValuesProvider<TModel> CreateSyntaxProvider(IncrementalGeneratorInitializationContext context)
     {
         return context.SyntaxProvider.CreateSyntaxProvider(
              static (node, token) =>
@@ -38,8 +38,8 @@ public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrem
                  return (result, result ? context : default);
              })
              .Where(c => c.result)
-             .Select((c, token) =>  c.Item2!)
-             .WithComparer(this.GetBundleEqualityComparer());
+             .Select((c, token) => c.Item2!)
+             .WithComparer(this.GetModelEqualityComparer());
     }
 
     void AddInitialSource(IncrementalGeneratorPostInitializationContext context)
@@ -55,7 +55,7 @@ public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrem
             throw new Exception($"{ex.GetType()} was thrown when generating initial source. StackTrace : {ex.StackTrace}", ex);
         }
     }
-    void AddSource(SourceProductionContext context, TBundle bundle)
+    void AddSource(SourceProductionContext context, TModel bundle)
     {
         var token = context.CancellationToken;
         token.ThrowIfCancellationRequested();
@@ -69,8 +69,8 @@ public abstract class IncrementalSourceGeneratorBase<TSyntax, TBundle> : IIncrem
         }
     }
 
-    protected virtual IEqualityComparer<TBundle> GetBundleEqualityComparer() => EqualityComparer<TBundle>.Default;
-    protected abstract bool CreateContext(Compilation compilation, ImmutableArray<AttributeData> attributes, out TBundle context);
+    protected virtual IEqualityComparer<TModel> GetModelEqualityComparer() => EqualityComparer<TModel>.Default;
+    protected abstract bool CreateContext(Compilation compilation, ImmutableArray<AttributeData> attributes, out TModel context);
     protected abstract void ProductInitialSource(IncrementalGeneratorPostInitializationContext context);
-    protected abstract void ProductSource(SourceProductionContext context, TBundle bundle);
+    protected abstract void ProductSource(SourceProductionContext context, TModel bundle);
 }

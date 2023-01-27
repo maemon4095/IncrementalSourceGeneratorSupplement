@@ -56,32 +56,33 @@ namespace {nameof(SourceGeneratorSupplement)}
                     var location = attributeData.ApplicationSyntaxReference?.GetSyntax().GetLocation();
                     return (Symbol: (symbol as IMethodSymbol)!, Type: type, Depth: Math.Max(depth - 1, -1), Location: location);
                 })
+                .Where(pair => pair is { Symbol: not null, Type: not null })
                 .Select((pair, token) =>
                 {
                     token.ThrowIfCancellationRequested();
-                    return new Bundle(pair.Symbol, pair.Type, pair.Depth, pair.Location);
+                    return new Model(pair.Symbol, pair.Type, pair.Depth, pair.Location);
                 });
 
         context.RegisterSourceOutput(provider, this.ProductSource);
     }
 
-    void ProductSource(SourceProductionContext context, Bundle bundle)
+    void ProductSource(SourceProductionContext context, Model model)
     {
-        var refs = bundle.Type.DeclaringSyntaxReferences;
+        var refs = model.Type.DeclaringSyntaxReferences;
         if (refs.Length <= 0)
         {
-            context.ReportDiagnostic(Diagnostics.ImplementationWasNotFound(bundle.Location, bundle.Type));
+            context.ReportDiagnostic(Diagnostics.ImplementationWasNotFound(model.Location, model.Type));
             return;
         }
         var writer = new IndentedWriter("    ");
-        using (writer.DeclarationScope(bundle.Method))
+        using (writer.DeclarationScope(model.Method))
         {
             writer["return @\""].End();
             var indentLevel = writer.IndentLevel;
             writer.IndentLevel = 0;
             foreach (var r in refs)
             {
-                using (writer.DeclarationScope(bundle.Type.ContainingSymbol, bundle.DepthLimit))
+                using (writer.DeclarationScope(model.Type.ContainingSymbol, model.DepthLimit))
                 {
                     //remove trailing trivia because it does not affect indent level
                     var syntax = r.GetSyntax().WithoutTrailingTrivia();
@@ -98,7 +99,7 @@ namespace {nameof(SourceGeneratorSupplement)}
                     }
                     if (minindent < 0) minindent = 0;
 
-                    //leading trivia contains pragma directive so remove it
+                    //leading trivia contains pragma directive so exclude it
                     foreach (var line in syntax.WithoutLeadingTrivia().ToFullString().EnumerateLines())
                     {
                         var trimmed = line.TrimStart();
@@ -111,12 +112,12 @@ namespace {nameof(SourceGeneratorSupplement)}
             writer.IndentLevel = indentLevel;
         }
 
-        context.AddSource($"{nameof(SourceGeneratorSupplement)}.{nameof(TypeSourceGenerator)}.{bundle.Method.ContainingType}.{bundle.Method.Name}.g.cs", writer.ToString());
+        context.AddSource($"{nameof(SourceGeneratorSupplement)}.{nameof(TypeSourceGenerator)}.{model.Method.ContainingType}.{model.Method.Name}.g.cs", writer.ToString());
     }
 
-    readonly struct Bundle
+    readonly struct Model
     {
-        public Bundle(IMethodSymbol method, INamedTypeSymbol type, int depthLimit, Location? location)
+        public Model(IMethodSymbol method, INamedTypeSymbol type, int depthLimit, Location? location)
         {
             this.Method = method;
             this.Type = type;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SourceGeneratorSupplement.Internal;
+﻿namespace SourceGeneratorSupplement.Internal;
 
 internal static class SpanExtension
 {
@@ -9,8 +7,8 @@ internal static class SpanExtension
         return new ReadOnlySpanLines(text.AsSpan());
     }
 
-    public static ReadOnlySpanLines EnumerateLines(in this ReadOnlySpan<char> text)
+    public static ReadOnlySpanLines EnumerateLines(this ReadOnlySpan<char> text)
     {
-        return new ReadOnlySpanLines(in text);
+        return new ReadOnlySpanLines(text);
     }
 }

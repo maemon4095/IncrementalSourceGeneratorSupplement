@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace SourceGeneratorSupplement.Internal;
+﻿namespace SourceGeneratorSupplement.Internal;
 
 internal readonly ref struct ReadOnlySpanLines
 {
     public ref struct Enumerator
     {
-        public Enumerator(in ReadOnlySpanLines self)
+        public Enumerator(ReadOnlySpanLines self)
         {
             this.index = -1;
             this.remain = self.text;
@@ -40,7 +38,7 @@ internal readonly ref struct ReadOnlySpanLines
         public ReadOnlySpan<char> Current => this.remain.Slice(0, this.index);
     }
 
-    public ReadOnlySpanLines(in ReadOnlySpan<char> text)
+    public ReadOnlySpanLines(ReadOnlySpan<char> text)
     {
         this.text = text;
     }
@@ -49,6 +47,6 @@ internal readonly ref struct ReadOnlySpanLines
 
     public Enumerator GetEnumerator()
     {
-        return new Enumerator(in this);
+        return new Enumerator(this);
     }
 }
